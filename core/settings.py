@@ -132,6 +132,10 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
+# Add these settings if you want to customize logout behavior
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
