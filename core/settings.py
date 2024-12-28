@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-dl5mna8cr37^i$wf!b92m(rok#i8(t1!_03_i_=5+v$$gz=6nx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False  # Set to False for production
 
-ALLOWED_HOSTS = ['lms-demo.aliahad.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['387h1twif8i3r.ahost.marscode.site', 'localhost', '127.0.0.1', 'lms-demo.aliahad.com']
 
 
 # Application definition
@@ -154,7 +154,25 @@ LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = ['https://387h1twif8i3r.ahost.marscode.site', 'https://lms-demo.aliahad.com']
 
+# Security Settings - Simplified for initial deployment
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
+# Session and CSRF Settings
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
+SECURE_SSL_REDIRECT = True
+
+
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 
 
