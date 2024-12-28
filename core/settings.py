@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-dl5mna8cr37^i$wf!b92m(rok#i8(t1!_03_i_=5+v$$gz=6nx
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False  # Set to False for production
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['lms-demo.aliahad.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
