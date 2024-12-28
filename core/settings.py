@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from os import getenv
+from dotenv import load_dotenv
+from urllib.parse import urlparse
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,8 +86,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': urlparse(os.getenv("DATABASE_URL")).path.replace('/', ''),
+        'USER': urlparse(os.getenv("DATABASE_URL")).username,
+        'PASSWORD': urlparse(os.getenv("DATABASE_URL")).password,
+        'HOST': urlparse(os.getenv("DATABASE_URL")).hostname,
+        'PORT': 5432,
     }
 }
 
@@ -156,15 +166,14 @@ USE_X_FORWARDED_PORT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Disable SSL redirect temporarily to debug
-SECURE_SSL_REDIRECT = False
 
-# Comment out HSTS settings for now
-# SECURE_HSTS_SECONDS = 31536000
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True
 
-# Add this for debugging (temporarily)
-DEBUG = True  # Set to True temporarily to see detailed error messages
+
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+
 
 
