@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>My Loans</h2>
+    </div>
+    <div class="col text-end">
+        <a href="{% url 'loan_application' %}" class="btn btn-primary">Apply for Loan</a>
+    </div>
+</div>
+
+{% if loans %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Monthly Payment</th>
+                    <th>Status</th>
+                    <th>Application Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                <tr>
+                    <td>#{{ loan.id }}</td>
+                    <td>{{ loan.loan_type.name }}</td>
+                    <td>${{ loan.amount }}</td>
+                    <td>${{ loan.monthly_payment|default:"--" }}</td>
+                    <td><span class="badge bg-{{ loan.status|lower }}">{{ loan.status }}</span></td>
+                    <td>{{ loan.application_date|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'loan_detail' loan.pk %}" class="btn btn-sm btn-info">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        You haven't applied for any loans yet. 
+        <a href="{% url 'loan_application' %}" class="alert-link">Apply now</a>
+    </div>
+{% endif %}
+{% endblock %} 

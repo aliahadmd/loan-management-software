@@ -1,0 +1,36 @@
+/* Loan Status Badge Colors */
+.badge.bg-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge.bg-approved {
+    background-color: #0d6efd;
+}
+
+.badge.bg-rejected {
+    background-color: #dc3545;
+}
+
+.badge.bg-active {
+    background-color: #198754;
+}
+
+.badge.bg-closed {
+    background-color: #6c757d;
+}
+
+/* Dashboard Stats */
+.stats-card {
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card.pending { border-color: #ffc107; }
+.stats-card.approved { border-color: #0d6efd; }
+.stats-card.active { border-color: #198754; }
+.stats-card.total { border-color: #6c757d; } 
