@@ -144,9 +144,4 @@ LOGOUT_REDIRECT_URL = 'login'  # Where to redirect after logout
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Security settings for production
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = False  # Set to True if using HTTPS
-SESSION_COOKIE_SECURE = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+
