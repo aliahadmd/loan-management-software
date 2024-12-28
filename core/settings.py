@@ -147,19 +147,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CSRF Settings
 CSRF_TRUSTED_ORIGINS = ['https://387h1twif8i3r.ahost.marscode.site']
 
-# Security Settings
+# Security Settings - Simplified for initial deployment
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
-# Session Settings
+# Session and CSRF Settings
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# If you're behind a proxy
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# Disable SSL redirect temporarily to debug
+SECURE_SSL_REDIRECT = False
+
+# Comment out HSTS settings for now
+# SECURE_HSTS_SECONDS = 31536000
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+
+# Add this for debugging (temporarily)
+DEBUG = True  # Set to True temporarily to see detailed error messages
 
 
