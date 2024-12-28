@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
+}
+
+.feature-card {
+    border: none;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #0d6efd;
+}
+
+.cta-section {
+    background-color: #f8f9fa;
+    padding: 80px 0;
+}
+
+.loan-type-card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loan-type-card .card-header {
+    background-color: #0d6efd;
+    color: white;
+    padding: 20px;
+}
+
+/* Add footer styles */
+.footer {
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 60px 0 30px;
+}
+
+.footer h5 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #0d6efd;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 40px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.social-links a {
+    color: #ffffff;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-links a:hover {
+    color: #0d6efd;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Welcome to Loan Management System</h1>
+        <p class="lead mb-5">Quick and easy loan solutions for your financial needs</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg me-3">Go to Dashboard</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-3">Get Started</a>
+            <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">Register Now</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose Us</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4>Quick Processing</h4>
+                    <p>Get your loan approved within 24 hours with minimal documentation.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4>Secure & Safe</h4>
+                    <p>Your data is protected with bank-grade security measures.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h4>Competitive Rates</h4>
+                    <p>Enjoy the most competitive interest rates in the market.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Loan Types Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Loan Types</h2>
+        <div class="row">
+            {% for loan_type in loan_types %}
+            <div class="col-md-4 mb-4">
+                <div class="card loan-type-card">
+                    <div class="card-header text-center">
+                        <h4 class="mb-0">{{ loan_type.name }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Interest Rate: {{ loan_type.interest_rate }}%</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Max Amount: ${{ loan_type.max_amount }}</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Duration: Up to {{ loan_type.max_duration_months }} months</li>
+                        </ul>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'loan_application' %}" class="btn btn-primary">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section text-center">
+    <div class="container">
+        <h2 class="mb-4">Ready to Get Started?</h2>
+        <p class="lead mb-4">Join thousands of satisfied customers who trust our loan services</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'loan_application' %}" class="btn btn-primary btn-lg">Apply for a Loan</a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Create an Account</a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5>About Us</h5>
+                <p>We provide quick and easy loan solutions with competitive interest rates and flexible repayment options.</p>
+                <div class="social-links mt-3">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'loan_application' %}">Apply for Loan</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>Contact Info</h5>
+                <ul class="footer-links">
+                    <li><i class="fas fa-phone me-2"></i> +1 234 567 8900</li>
+                    <li><i class="fas fa-envelope me-2"></i> info@loansystem.com</li>
+                    <li><i class="fas fa-map-marker-alt me-2"></i> 123 Finance Street, NY 10001</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="mb-0">&copy; {% now "Y" %} Loan Management System. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Replace the Font Awesome kit with CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+{% endblock %} 

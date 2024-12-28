@@ -16,7 +16,8 @@ import json
 def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
-    return redirect('login')
+    loan_types = LoanType.objects.all()
+    return render(request, 'home.html', {'loan_types': loan_types})
 
 @login_required
 def dashboard(request):
