@@ -10,4 +10,5 @@ urlpatterns = [
     path('loan/<int:pk>/approve/', views.approve_loan, name='approve_loan'),
     path('loan/<int:pk>/reject/', views.reject_loan, name='reject_loan'),
     path('loans/pending/', views.loan_approval_list, name='loan_approval_list'),
+    path('reports/', views.loan_reports, name='loan_reports'),
 ] 

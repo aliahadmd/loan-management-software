@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>Loan Analytics</h2>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card total">
+            <div class="card-body">
+                <h5 class="card-title">Total Loans</h5>
+                <h3 class="card-text">${{ total_amount|floatformat:2 }}</h3>
+                <p class="text-muted">Across {{ total_loans }} loans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card active">
+            <div class="card-body">
+                <h5 class="card-title">Active Loans</h5>
+                <h3 class="card-text">${{ active_amount|floatformat:2 }}</h3>
+                <p class="text-muted">{{ active_loans }} active loans</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card pending">
+            <div class="card-body">
+                <h5 class="card-title">Total Collected</h5>
+                <h3 class="card-text">${{ total_collected|floatformat:2 }}</h3>
+                <p class="text-muted">From {{ total_payments }} payments</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card approved">
+            <div class="card-body">
+                <h5 class="card-title">Outstanding</h5>
+                <h3 class="card-text">${{ total_outstanding|floatformat:2 }}</h3>
+                <p class="text-muted">To be collected</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Loan Status Distribution</h5>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Monthly Loan Applications</h5>
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loan Type Analysis -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Loan Type Analysis</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Loan Type</th>
+                                <th>Total Loans</th>
+                                <th>Total Amount</th>
+                                <th>Average Amount</th>
+                                <th>Active Loans</th>
+                                <th>Success Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type in loan_type_analysis %}
+                            <tr>
+                                <td>{{ type.name }}</td>
+                                <td>{{ type.total_loans }}</td>
+                                <td>${{ type.total_amount|floatformat:2 }}</td>
+                                <td>${{ type.avg_amount|floatformat:2 }}</td>
+                                <td>{{ type.active_loans }}</td>
+                                <td>{{ type.success_rate|floatformat:1 }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Status Distribution Chart
+    new Chart(document.getElementById('statusChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ status_labels|safe }},
+            datasets: [{
+                data: {{ status_data }},
+                backgroundColor: [
+                    '#ffc107', // pending
+                    '#0d6efd', // approved
+                    '#dc3545', // rejected
+                    '#198754', // active
+                    '#6c757d'  // closed
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Monthly Applications Chart
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'line',
+        data: {
+            labels: {{ monthly_labels|safe }},
+            datasets: [{
+                label: 'Number of Applications',
+                data: {{ monthly_data }},
+                borderColor: '#0d6efd',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

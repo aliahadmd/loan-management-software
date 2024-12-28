@@ -8,6 +8,10 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Count, Sum, Avg, Case, When, F, DecimalField, IntegerField
+from django.db.models.functions import TruncMonth, Coalesce
+from datetime import datetime, timedelta
+import json
 
 def home(request):
     if request.user.is_authenticated:
@@ -128,3 +132,96 @@ def make_payment(request, loan_id):
         'loan': loan,
     }
     return render(request, 'loan/payment_form.html', context)
+
+@user_passes_test(is_loan_officer)
+def loan_reports(request):
+    # Basic statistics
+    loans = Loan.objects.all()
+    total_loans = loans.count()
+    total_amount = loans.aggregate(Sum('amount'))['amount__sum'] or 0
+    active_loans = loans.filter(status='ACTIVE').count()
+    active_amount = loans.filter(status='ACTIVE').aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    # Payment statistics
+    payments = Payment.objects.all()
+    total_payments = payments.count()
+    total_collected = payments.aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    # Calculate total outstanding (simplified for SQLite compatibility)
+    active_loans_total = loans.filter(status='ACTIVE').aggregate(
+        total_payable=Sum('total_payable')
+    )['total_payable'] or 0
+    
+    active_loans_paid = loans.filter(status='ACTIVE').annotate(
+        paid=Sum('payments__amount')
+    ).aggregate(
+        total_paid=Sum('paid')
+    )['total_paid'] or 0
+    
+    total_outstanding = active_loans_total - active_loans_paid
+
+    # Status distribution
+    status_distribution = loans.values('status').annotate(count=Count('id'))
+    status_labels = []
+    status_data = []
+    for item in status_distribution:
+        status_labels.append(item['status'].capitalize())
+        status_data.append(item['count'])
+
+    # Monthly applications (last 12 months)
+    twelve_months_ago = datetime.now() - timedelta(days=365)
+    monthly_apps = (
+        loans.filter(application_date__gte=twelve_months_ago)
+        .annotate(month=TruncMonth('application_date'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+    
+    monthly_labels = []
+    monthly_data = []
+    for item in monthly_apps:
+        monthly_labels.append(item['month'].strftime('%b %Y'))
+        monthly_data.append(item['count'])
+
+    # Loan type analysis
+    loan_type_analysis = []
+    for loan_type in LoanType.objects.all():
+        type_loans = loans.filter(loan_type=loan_type)
+        total_type_loans = type_loans.count()
+        if total_type_loans > 0:
+            total_amount = type_loans.aggregate(
+                total=Sum('amount')
+            )['total'] or 0
+            
+            avg_amount = type_loans.aggregate(
+                avg=Avg('amount')
+            )['avg'] or 0
+            
+            analysis = {
+                'name': loan_type.name,
+                'total_loans': total_type_loans,
+                'total_amount': total_amount,
+                'avg_amount': avg_amount,
+                'active_loans': type_loans.filter(status='ACTIVE').count(),
+                'success_rate': (type_loans.filter(
+                    status__in=['ACTIVE', 'CLOSED']).count() / total_type_loans) * 100
+            }
+            loan_type_analysis.append(analysis)
+
+    context = {
+        'total_loans': total_loans,
+        'total_amount': total_amount,
+        'active_loans': active_loans,
+        'active_amount': active_amount,
+        'total_payments': total_payments,
+        'total_collected': total_collected,
+        'total_outstanding': total_outstanding,
+        'status_labels': json.dumps(status_labels),
+        'status_data': status_data,
+        'monthly_labels': json.dumps(monthly_labels),
+        'monthly_data': monthly_data,
+        'loan_type_analysis': loan_type_analysis,
+    }
+    
+    return render(request, 'loan/reports.html', context)
